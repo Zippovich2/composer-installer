@@ -16,7 +16,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Zippovich2\\ComposerInstaller\\Test\\": "src/"
+            "Zippovich2\\ComposerInstaller\\Test\\": "tests/"
         }
     },
     "extra": {

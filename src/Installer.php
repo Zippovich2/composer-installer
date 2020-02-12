@@ -85,7 +85,7 @@ class Installer implements PluginInterface, EventSubscriberInterface
             $envVars = $this->parseEnvVars();
 
             foreach ($placeholders as $placeholder) {
-                $value = isset($envVars[$placeholder]) ? $envVars[$placeholder] : \getenv($placeholder);
+                $value = $envVars[$placeholder] ?? \getenv($placeholder);
 
                 if (empty($value)) {
                     throw new \Exception(\sprintf('Missing environment variable "%s".', $placeholder));
