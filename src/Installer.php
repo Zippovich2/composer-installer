@@ -96,7 +96,7 @@ class Installer implements PluginInterface, EventSubscriberInterface
             $remoteFilesystem = $event->getRemoteFilesystem();
 
             $event->setRemoteFilesystem(
-                new RemoteFilesystem(
+                new RemoteFileystem(
                     $url,
                     $this->getIO(),
                     $this->getComposer()->getConfig(),

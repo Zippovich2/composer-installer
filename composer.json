@@ -5,6 +5,7 @@
     "type": "composer-plugin",
     "license": "MIT",
     "require": {
+        "php": "^7.2.5",
         "composer-plugin-api": "^1.1",
         "composer/composer": "^1.9",
         "symfony/dotenv": "^5.0"

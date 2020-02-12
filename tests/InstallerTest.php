@@ -20,6 +20,9 @@ use Composer\Util\RemoteFilesystem;
 use PHPUnit\Framework\TestCase;
 use Zippovich2\ComposerInstaller\Installer;
 
+/**
+ * @author Skoropadskyi Roman <zipo.ckorop@gmail.com>
+ */
 class InstallerTest extends TestCase
 {
     public function tearDown(): void

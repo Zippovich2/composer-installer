@@ -20,7 +20,7 @@ use Composer\Util\RemoteFilesystem as ComposerRemoteFilesystem;
 /**
  * @author Skoropadskyi Roman <zipo.ckorop@gmail.com>
  */
-final class RemoteFileSystem extends ComposerRemoteFilesystem
+final class RemoteFileystem extends ComposerRemoteFilesystem
 {
     /**
      * @var string
