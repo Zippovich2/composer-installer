@@ -24,7 +24,7 @@ use Symfony\Component\Dotenv\Dotenv;
 /**
  * @author Skoropadskyi Roman <zipo.ckorop@gmail.com>
  */
-final class Installer implements PluginInterface, EventSubscriberInterface
+class Installer implements PluginInterface, EventSubscriberInterface
 {
     /**
      * @var Composer
@@ -53,7 +53,7 @@ final class Installer implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function activate(Composer $composer, IOInterface $io): void
     {
@@ -85,10 +85,10 @@ final class Installer implements PluginInterface, EventSubscriberInterface
             $envVars = $this->parseEnvVars();
 
             foreach ($placeholders as $placeholder) {
-                $value = isset($envVars[$placeholder]) ? $envVars[$placeholder] : getenv($placeholder);
+                $value = $envVars[$placeholder] ?? \getenv($placeholder);
 
                 if (empty($value)) {
-                    throw new \Exception(sprintf('Missing environment variable "%s".', $placeholder));
+                    throw new \Exception(\sprintf('Missing environment variable "%s".', $placeholder));
                 }
                 $url = \str_replace('{%' . $placeholder . '%}', $envVars[$placeholder], $url);
             }
@@ -98,8 +98,8 @@ final class Installer implements PluginInterface, EventSubscriberInterface
             $event->setRemoteFilesystem(
                 new RemoteFilesystem(
                     $url,
-                    $this->io,
-                    $this->composer->getConfig(),
+                    $this->getIO(),
+                    $this->getComposer()->getConfig(),
                     $remoteFilesystem->getOptions(),
                     $remoteFilesystem->isTlsDisabled()
                 )
@@ -110,7 +110,7 @@ final class Installer implements PluginInterface, EventSubscriberInterface
     /**
      * Parse variables from package url.
      */
-    public function getPlaceholders(?string $url): array
+    private function getPlaceholders(?string $url): array
     {
         if (empty($url)) {
             return [];
@@ -124,7 +124,7 @@ final class Installer implements PluginInterface, EventSubscriberInterface
     /**
      * Parsing all .env* files and merge theme in order: .env, .env.local, .env.%APP_ENV%, .env.%APP_ENV%.local.
      */
-    public function parseEnvVars(): array
+    private function parseEnvVars(): array
     {
         $envVars = $this->parseEnvFile('.env');
         $envVars = $this->parseEnvFile('.env.local', $envVars);
@@ -140,12 +140,12 @@ final class Installer implements PluginInterface, EventSubscriberInterface
     /**
      * Parse .evn file and return it's values as array.
      *
-     * @param string $file path to the .env* file
+     * @param string $file        path to the .env* file
      * @param array  $existedVars values to be merged
      *
      * @return array return parsed values which merged with provided $data values or $existedVars if file not exists
      */
-    public function parseEnvFile(string $file, array $existedVars = []): array
+    private function parseEnvFile(string $file, array $existedVars = []): array
     {
         $path = self::$dir . '/' . $file;
 
@@ -155,6 +155,16 @@ final class Installer implements PluginInterface, EventSubscriberInterface
 
         $data = \file_get_contents($path);
 
-        return array_merge($existedVars, $this->dotenv->parse($data));
+        return \array_merge($existedVars, $this->dotenv->parse($data));
+    }
+
+    public function getComposer(): Composer
+    {
+        return $this->composer;
+    }
+
+    public function getIO(): IOInterface
+    {
+        return $this->io;
     }
 }
