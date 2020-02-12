@@ -90,7 +90,7 @@ class Installer implements PluginInterface, EventSubscriberInterface
                 if (empty($value)) {
                     throw new \Exception(\sprintf('Missing environment variable "%s".', $placeholder));
                 }
-                $url = \str_replace('{%' . $placeholder . '%}', $envVars[$placeholder], $url);
+                $url = \str_replace('{%' . $placeholder . '%}', $value, $url);
             }
 
             $remoteFilesystem = $event->getRemoteFilesystem();
