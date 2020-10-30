@@ -16,7 +16,8 @@ namespace Zippovich2\ComposerInstaller\Test;
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PreFileDownloadEvent;
-use Composer\Util\RemoteFilesystem;
+use PHPUnit\Framework\MockObject\MockBuilder;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Zippovich2\ComposerInstaller\Installer;
 
@@ -35,28 +36,27 @@ class InstallerTest extends TestCase
     {
         \putenv('TEST_KEY=test');
 
+        /**
+         * @var PreFileDownloadEvent|MockObject $event
+         */
         $event = $this->getMockBuilder(PreFileDownloadEvent::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getProcessedUrl', 'getRemoteFilesystem', 'setRemoteFilesystem'])
+            ->onlyMethods(['getProcessedUrl', 'setProcessedUrl'])
             ->getMock()
         ;
 
+        /**
+         * @var Composer|MockBuilder $composer
+         */
         $composer = $this->getMockBuilder(Composer::class)->disableOriginalConstructor()->getMock();
 
+        /**
+         * @var IOInterface|MockBuilder $io
+         */
         $io = $this->getMockBuilder(IOInterface::class)->disableOriginalConstructor()->getMockForAbstractClass();
 
-        $rfs = $this->getMockBuilder(RemoteFilesystem::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getOptions', 'isTlsDisabled'])
-            ->getMockForAbstractClass()
-        ;
-
         $event->expects(static::exactly(1))->method('getProcessedUrl')->willReturn('https://example/?key={%TEST_KEY%}');
-        $event->expects(static::exactly(1))->method('getRemoteFilesystem')->willReturn($rfs);
-        $event->expects(static::exactly(1))->method('setRemoteFilesystem');
-
-        $rfs->expects(static::exactly(1))->method('getOptions')->willReturn([]);
-        $rfs->expects(static::exactly(1))->method('isTlsDisabled')->willReturn(false);
+        $event->expects(static::exactly(1))->method('setProcessedUrl');
 
         $installer = new Installer();
         $installer->activate($composer, $io);
@@ -67,19 +67,27 @@ class InstallerTest extends TestCase
     {
         $this->expectException(\Exception::class);
 
+        /**
+         * @var PreFileDownloadEvent|MockObject $event
+         */
         $event = $this->getMockBuilder(PreFileDownloadEvent::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getProcessedUrl', 'getRemoteFilesystem', 'setRemoteFilesystem'])
+            ->onlyMethods(['getProcessedUrl', 'setProcessedUrl'])
             ->getMock()
         ;
 
+        /**
+         * @var Composer|MockBuilder $composer
+         */
         $composer = $this->getMockBuilder(Composer::class)->disableOriginalConstructor()->getMock();
 
+        /**
+         * @var IOInterface|MockBuilder $io
+         */
         $io = $this->getMockBuilder(IOInterface::class)->disableOriginalConstructor()->getMockForAbstractClass();
 
         $event->expects(static::exactly(1))->method('getProcessedUrl')->willReturn('https://example/?key={%TEST_KEY%}');
-        $event->expects(static::never())->method('getRemoteFilesystem');
-        $event->expects(static::never())->method('setRemoteFilesystem');
+        $event->expects(static::never())->method('setProcessedUrl');
 
         $installer = new Installer();
         $installer->activate($composer, $io);
