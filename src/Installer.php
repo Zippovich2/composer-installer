@@ -20,6 +20,7 @@ use Composer\Plugin\PluginEvents;
 use Composer\Plugin\PluginInterface;
 use Composer\Plugin\PreFileDownloadEvent;
 use Symfony\Component\Dotenv\Dotenv;
+use Zippovich2\ComposerInstaller\RemoteFilesystem;
 
 /**
  * @author Skoropadskyi Roman <zipo.ckorop@gmail.com>
@@ -93,7 +94,28 @@ class Installer implements PluginInterface, EventSubscriberInterface
                 $url = \str_replace('{%' . $placeholder . '%}', $value, $url);
             }
 
-            $event->setProcessedUrl($url);
+            $this->updateUrl($event, $url);
+        }
+    }
+
+    private function updateUrl(PreFileDownloadEvent $event, string $url): void
+    {
+        switch (Composer::VERSION[0]) {
+            case '1':
+                $remoteFilesystem = $event->getRemoteFilesystem();
+                $event->setRemoteFilesystem(
+                    new RemoteFilesystem(
+                        $url,
+                        $this->getIO(),
+                        $this->getComposer()->getConfig(),
+                        $remoteFilesystem->getOptions(),
+                        $remoteFilesystem->isTlsDisabled()
+                    )
+                );
+
+                break;
+            case '2':
+                $event->setProcessedUrl($url);
         }
     }
 
@@ -128,7 +150,7 @@ class Installer implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * Parse .evn file and return it values as array.
+     * Parse .env file and return it values as array.
      *
      * @param string $file        path to the .env* file
      * @param array  $existedVars values to be merged

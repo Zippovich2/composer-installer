@@ -5,9 +5,9 @@
     "type": "composer-plugin",
     "license": "MIT",
     "require": {
-        "php": "^7.2.5",
-        "composer-plugin-api": "^2.0",
-        "composer/composer": "^2.0",
+        "php": "^7.3",
+        "composer-plugin-api": "^1.1 | ^2.0",
+        "composer/composer": "^1.9 | ^2.0",
         "symfony/dotenv": "^5.0"
     },
     "autoload": {
