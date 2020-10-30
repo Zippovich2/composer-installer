@@ -20,7 +20,6 @@ use Composer\Plugin\PluginEvents;
 use Composer\Plugin\PluginInterface;
 use Composer\Plugin\PreFileDownloadEvent;
 use Symfony\Component\Dotenv\Dotenv;
-use Zippovich2\ComposerInstaller\RemoteFilesystem;
 
 /**
  * @author Skoropadskyi Roman <zipo.ckorop@gmail.com>
@@ -116,6 +115,8 @@ class Installer implements PluginInterface, EventSubscriberInterface
                 break;
             case '2':
                 $event->setProcessedUrl($url);
+
+                break;
         }
     }
 
