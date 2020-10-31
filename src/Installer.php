@@ -93,17 +93,30 @@ class Installer implements PluginInterface, EventSubscriberInterface
                 $url = \str_replace('{%' . $placeholder . '%}', $value, $url);
             }
 
-            $remoteFilesystem = $event->getRemoteFilesystem();
+            $this->updateUrl($event, $url);
+        }
+    }
 
-            $event->setRemoteFilesystem(
-                new RemoteFileystem(
-                    $url,
-                    $this->getIO(),
-                    $this->getComposer()->getConfig(),
-                    $remoteFilesystem->getOptions(),
-                    $remoteFilesystem->isTlsDisabled()
-                )
-            );
+    private function updateUrl(PreFileDownloadEvent $event, string $url): void
+    {
+        switch (Composer::VERSION[0]) {
+            case '1':
+                $remoteFilesystem = $event->getRemoteFilesystem();
+                $event->setRemoteFilesystem(
+                    new RemoteFilesystem(
+                        $url,
+                        $this->getIO(),
+                        $this->getComposer()->getConfig(),
+                        $remoteFilesystem->getOptions(),
+                        $remoteFilesystem->isTlsDisabled()
+                    )
+                );
+
+                break;
+            case '2':
+                $event->setProcessedUrl($url);
+
+                break;
         }
     }
 
@@ -138,7 +151,7 @@ class Installer implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * Parse .evn file and return it's values as array.
+     * Parse .env file and return it values as array.
      *
      * @param string $file        path to the .env* file
      * @param array  $existedVars values to be merged
@@ -166,5 +179,13 @@ class Installer implements PluginInterface, EventSubscriberInterface
     public function getIO(): IOInterface
     {
         return $this->io;
+    }
+
+    public function deactivate(Composer $composer, IOInterface $io): void
+    {
+    }
+
+    public function uninstall(Composer $composer, IOInterface $io): void
+    {
     }
 }

@@ -1,13 +1,13 @@
 {
     "name": "zippovich2/composer-installer",
     "description": "Allow add variables from .env* files to custom package url.",
-    "keywords": ["composer", "plugin", "installer", "variables", "environment", "vars"],
+    "keywords": ["composer", "plugin", "installer", "variables", "environment", "vars", "acf"],
     "type": "composer-plugin",
     "license": "MIT",
     "require": {
         "php": "^7.2.5",
-        "composer-plugin-api": "^1.1",
-        "composer/composer": "^1.9",
+        "composer-plugin-api": "^1.1 | ^2.0",
+        "composer/composer": "^1.9 | ^2.0",
         "symfony/dotenv": "^5.0"
     },
     "autoload": {
@@ -25,7 +25,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.16",
-        "phpunit/phpunit": "^8.0"
+        "phpunit/phpunit": "^8.0 | ^9.0"
     },
     "scripts": {
         "cs-check": "php-cs-fixer fix --allow-risky=yes --diff --ansi --dry-run",
